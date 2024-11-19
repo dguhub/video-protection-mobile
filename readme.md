@@ -46,14 +46,14 @@ To test the application:
 
    - Download Expo Go on your Android smartphone.
    - Scan the provided QR code below within Expo Go.
-   - ![Alt text](![image](https://github.com/user-attachments/assets/26f0ea0e-730a-4046-b44f-7c7e791e4b7a)
+   (![image](https://github.com/user-attachments/assets/26f0ea0e-730a-4046-b44f-7c7e791e4b7a)
 
 )
 
 2. **For iOS Users:**
    - Download Expo Go on your Apple smartphone.
    - Scan the provided QR code below within Expo Go.
-   - ![Alt text](![image](https://github.com/user-attachments/assets/37cf4b91-afa6-4237-ac08-730618d8920a)
+   (![image](https://github.com/user-attachments/assets/37cf4b91-afa6-4237-ac08-730618d8920a)
 
 )
 
