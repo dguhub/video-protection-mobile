@@ -16,6 +16,7 @@ export default function LoginScreen() {
   const [error, setError] = useState("");
 
   const handleLogin = () => {
+    router.replace("/home");
     if (email === "" || password === "") {
       setError("Email and password are required");
       return;

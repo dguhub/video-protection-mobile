@@ -17,6 +17,7 @@ interface VideoItemProps {
   title: string;
   metadata: string;
   styleBody?: ViewStyle;
+  isOnlyVideo?: boolean;
 }
 
 const VideoItem = ({
@@ -26,6 +27,7 @@ const VideoItem = ({
   title,
   metadata,
   styleBody,
+  isOnlyVideo,
 }: VideoItemProps) => {
   return (
     <TouchableOpacity
@@ -38,13 +40,15 @@ const VideoItem = ({
           <Text style={styles.duration}>{duration}</Text>
         </View>
 
-        <View style={[styles.videoDetails, styleBody]}>
-          <Image source={{ uri: avatar }} style={styles.avatar} />
-          <View>
-            <Text style={styles.title}>{title}</Text>
-            <Text style={styles.metadata}>{metadata}</Text>
+        {!isOnlyVideo && (
+          <View style={[styles.videoDetails, styleBody]}>
+            <Image source={{ uri: avatar }} style={styles.avatar} />
+            <View>
+              <Text style={styles.title}>{title}</Text>
+              <Text style={styles.metadata}>{metadata}</Text>
+            </View>
           </View>
-        </View>
+        )}
       </View>
     </TouchableOpacity>
   );
