@@ -46,13 +46,15 @@ To test the application:
 
    - Download Expo Go on your Android smartphone.
    - Scan the provided QR code below within Expo Go.
-   - ![Alt text](![image](https://github.com/user-attachments/assets/4864a94d-38db-4868-b981-51f6da5d332b)
+   - ![Alt text](![image](https://github.com/user-attachments/assets/26f0ea0e-730a-4046-b44f-7c7e791e4b7a)
+
 )
 
 2. **For iOS Users:**
    - Download Expo Go on your Apple smartphone.
    - Scan the provided QR code below within Expo Go.
-   - ![Alt text](![image](https://github.com/user-attachments/assets/ced795b6-3a38-4cac-91ad-8567c1aebe07)
+   - ![Alt text](![image](https://github.com/user-attachments/assets/37cf4b91-afa6-4237-ac08-730618d8920a)
+
 )
 
 **Note:** The backend server might experience a delay of up to 30 seconds due to server sleep as it is hosted on a free tier. This delay is not a bug but an issue related to free tier hosting.
