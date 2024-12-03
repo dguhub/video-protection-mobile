@@ -67,6 +67,7 @@ function RootLayoutNav() {
           <Stack.Screen name="video" options={{ title: "Video" }} />
           <Stack.Screen name="profile" options={{ title: "Profile" }} />
           <Stack.Screen name="comment" options={{ presentation: "modal" }} />
+          <Stack.Screen name="shorts" options={{ title: "shorts" }} />
         </Stack>
       </GestureHandlerRootView>
     </ThemeProvider>

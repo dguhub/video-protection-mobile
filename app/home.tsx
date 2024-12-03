@@ -95,12 +95,16 @@ export default function HomeScreen() {
           <Feather name="home" size={24} color="black" />
           <Text style={styles.navigationItemText}>Trang chủ</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navigationItem}>
+        <TouchableOpacity
+          style={styles.navigationItem}
+          onPress={() => router.push("/shorts")}
+        >
           <Feather name="youtube" size={24} color="black" />
           <Text style={styles.navigationItemText}>Shorts</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.navigationItem, styles.navigationItemIconCenter]}>
+          style={[styles.navigationItem, styles.navigationItemIconCenter]}
+        >
           <AntDesign name="pluscircleo" size={34} color="black" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.navigationItem}>
@@ -109,7 +113,8 @@ export default function HomeScreen() {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navigationItem}
-          onPress={() => router.push("/profile")}>
+          onPress={() => router.push("/profile")}
+        >
           <Feather name="user" size={24} color="black" />
           <Text style={styles.navigationItemText}>Bạn</Text>
         </TouchableOpacity>
