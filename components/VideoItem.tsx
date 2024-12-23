@@ -11,6 +11,7 @@ import {
 import { router } from "expo-router";
 
 interface VideoItemProps {
+  id: string;
   thumbnail: string;
   duration: string;
   avatar: string;
@@ -21,6 +22,7 @@ interface VideoItemProps {
 }
 
 const VideoItem = ({
+  id,
   thumbnail,
   duration,
   avatar,
@@ -32,7 +34,7 @@ const VideoItem = ({
   return (
     <TouchableOpacity
       onPress={() => {
-        router.push("/video");
+        router.push(`/videos/${id}/public`);
       }}>
       <View style={styles.videoContainer}>
         <View style={styles.thumbnailContainer}>

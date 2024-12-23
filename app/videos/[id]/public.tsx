@@ -1,15 +1,65 @@
-/** @format */
-
 import { videos } from "@/assets/video";
 import VideoItem from "@/components/VideoItem";
 import { FontAwesome } from "@expo/vector-icons";
-import { faker } from "@faker-js/faker/.";
+import { faker, vi } from "@faker-js/faker/.";
+import axios from "axios";
 import { Video } from "expo-av";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
+import { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 
-const VideoScreen = () => {
+const VideoPublicScreen = () => {
+  const { id } = useLocalSearchParams();
+  const [video, setVideo] = useState<any>(null);
+  const [listVideo, setListVideo] = useState<any[]>([]);
+  const [page, setPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+
+  const handleFetchVideos = async (pageNumber: number) => {
+    if (!hasMore || isLoading) return;
+
+    setIsLoading(true);
+    try {
+      const response = await axios.get(
+        `https://video-protection-api-dev.dguhub.tech/videos?currentPage=${pageNumber}&perPage=20`
+      );
+
+      const newVideos = response.data.items;
+      if (newVideos.length === 0) {
+        setHasMore(false);
+      } else {
+        setListVideo((prev) =>
+          pageNumber === 1 ? newVideos : [...prev, ...newVideos]
+        );
+        setPage(pageNumber + 1);
+      }
+    } catch (error) {
+      console.error("Error fetching videos:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const handleFetchVideo = async () => {
+      const response = await axios.get(
+        `https://video-protection-api-dev.dguhub.tech/videos/${id}/public`
+      );
+      setVideo(response.data);
+    };
+
+    handleFetchVideo();
+    handleFetchVideos(1);
+  }, [id]);
+
+  const handleLoadMore = () => {
+    if (!isLoading && hasMore) {
+      handleFetchVideos(page);
+    }
+  };
+
   return (
     <View>
       <View
@@ -18,20 +68,32 @@ const VideoScreen = () => {
         }}>
         <Video
           source={{
-            uri: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+            uri: video?.file?.path,
           }}
           style={{ height: 250 }}
           useNativeControls
+          isLooping
         />
       </View>
-      <ScrollView>
+      <ScrollView
+        onScroll={({ nativeEvent }) => {
+          const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
+          const isCloseToBottom =
+            layoutMeasurement.height + contentOffset.y >=
+            contentSize.height - 20;
+
+          if (isCloseToBottom) {
+            handleLoadMore();
+          }
+        }}
+        scrollEventThrottle={400}>
         <View style={{ paddingVertical: 20, paddingHorizontal: 10 }}>
           <Text
             style={{
               fontWeight: 600,
               fontSize: 18,
             }}>
-            {faker.lorem.sentence()}
+            {video?.title}
           </Text>
           <View
             style={{
@@ -57,7 +119,9 @@ const VideoScreen = () => {
             <View
               style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
               <Image
-                source={{ uri: faker.image.url() }}
+                source={{
+                  uri: video?.channel?.avatarFile?.path ?? faker.image.url(),
+                }}
                 style={{
                   width: 34,
                   height: 34,
@@ -65,7 +129,7 @@ const VideoScreen = () => {
                 }}
               />
               <Text style={{ fontSize: 14, fontWeight: 500 }}>
-                {faker.person.fullName()}
+                {video?.channel?.name}
               </Text>
               {/* total sub */}
               <Text style={{ fontSize: 14, color: "#666" }}>
@@ -214,29 +278,44 @@ const VideoScreen = () => {
                 overflow: "hidden",
                 paddingRight: 10,
               }}>
-              {faker.lorem.sentence().substring(0, 40)}
+              {video?.description ?? faker.lorem.sentence().substring(0, 40)}
             </Text>
           </View>
         </TouchableOpacity>
 
         <View style={{ marginTop: 30, gap: 16 }}>
-          {videos.map((item) => (
+          {listVideo.map((item: any) => (
             <VideoItem
               key={item.id}
-              thumbnail={item.thumbnail}
-              duration={item.duration}
-              avatar={item.avatar}
+              id={item.id}
+              thumbnail={item.file.thumbnail.path}
+              duration={`${faker.number.int({
+                min: 1,
+                max: 59,
+              })}:${faker.number.int({
+                min: 1,
+                max: 59,
+              })}`}
+              avatar={item.channel.avatarFile?.path ?? faker.image.url()}
               title={item.title}
-              metadata={item.metadata}
+              metadata={`${item.channel.name} • ${
+                item.viewCount ?? faker.number.int({ min: 1000, max: 100000 })
+              } lượt xem • ${faker.date.recent().toLocaleDateString()}`}
               styleBody={{
                 paddingHorizontal: 10,
               }}
             />
           ))}
+
+          {isLoading && (
+            <View style={{ padding: 20, alignItems: "center" }}>
+              <Text>Đang tải...</Text>
+            </View>
+          )}
         </View>
       </ScrollView>
     </View>
   );
 };
 
-export default VideoScreen;
+export default VideoPublicScreen;

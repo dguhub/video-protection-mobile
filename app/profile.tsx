@@ -1,9 +1,10 @@
 /** @format */
 
-import { videos } from "@/assets/video";
 import VideoItem from "@/components/VideoItem";
 import { AntDesign, Entypo, Feather, FontAwesome } from "@expo/vector-icons";
 import { faker } from "@faker-js/faker/.";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import {
   Image,
   Text,
@@ -15,6 +16,20 @@ import {
 } from "react-native";
 
 export default function Profile() {
+  const [videos, setVideos] = useState<any>([]);
+
+  useEffect(() => {
+    const handleFetchVideos = async () => {
+      const response = await axios.get(
+        "https://video-protection-api-dev.dguhub.tech/videos"
+      );
+
+      setVideos(response.data.items);
+    };
+
+    handleFetchVideos();
+  }, []);
+
   return (
     <View style={{ paddingVertical: 10, marginTop: 30, paddingHorizontal: 20 }}>
       <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -62,22 +77,31 @@ export default function Profile() {
           horizontal
           showsHorizontalScrollIndicator={false}
           style={{ marginBottom: 10 }}>
-          {videos.slice(0, 6).map((item) => (
+          {videos.slice(0, 6).map((item: any) => (
             <View key={item.id} style={{ paddingHorizontal: 5, width: 220 }}>
               <VideoItem
+                id={item.id}
                 isOnlyVideo
-                thumbnail={item.thumbnail}
-                duration={item.duration}
-                avatar={item.avatar}
+                thumbnail={item.file.thumbnail.path}
+                duration={`${faker.number.int({
+                  min: 1,
+                  max: 59,
+                })}:${faker.number.int({
+                  min: 1,
+                  max: 59,
+                })}`}
+                avatar={item.channel.avatarFile?.path ?? faker.image.url()}
                 title={item.title}
-                metadata={item.metadata}
+                metadata={`${item.channel.name} • ${
+                  item.viewCount ?? faker.number.int({ min: 10, max: 1000 })
+                } lượt xem • ${faker.date.recent().toLocaleDateString()}`}
               />
             </View>
           ))}
         </ScrollView>
       </View>
 
-      <View style={{ gap: 10, marginTop: 10 }}>
+      <View style={{ gap: 14, marginTop: 10 }}>
         <View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
           <AntDesign name="videocamera" size={20} color="black" />
           <Text>Video của bạn </Text>

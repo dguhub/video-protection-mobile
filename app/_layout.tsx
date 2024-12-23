@@ -61,10 +61,9 @@ function RootLayoutNav() {
         <Stack>
           <Stack.Screen name="login" options={{ headerShown: false }} />
           <Stack.Screen name="sign-up" options={{ headerShown: false }} />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="modal" options={{ presentation: "modal" }} />
           <Stack.Screen name="home" options={{ title: "Home" }} />
-          <Stack.Screen name="video" options={{ title: "Video" }} />
+          <Stack.Screen name="videos" options={{ headerShown: true }} />
           <Stack.Screen name="profile" options={{ title: "Profile" }} />
           <Stack.Screen name="comment" options={{ presentation: "modal" }} />
         </Stack>

@@ -1,6 +1,6 @@
 /** @format */
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   FlatList,
   StyleSheet,
@@ -13,17 +13,62 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Feather from "react-native-vector-icons/Feather";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import VideoItem from "@/components/VideoItem";
-import { videos } from "@/assets/video";
 import { router } from "expo-router";
+import axios from "axios";
+import { faker } from "@faker-js/faker/.";
 
 export default function HomeScreen() {
+  const [videos, setVideos] = useState<any[]>([]);
+  const [page, setPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+
+  const handleFetchVideos = async (pageNumber: number) => {
+    if (!hasMore || isLoading) return;
+
+    setIsLoading(true);
+    try {
+      const response = await axios.get(
+        `https://video-protection-api-dev.dguhub.tech/videos?currentPage=${pageNumber}&perPage=20`
+      );
+
+      const newVideos = response.data.items;
+      if (newVideos.length === 0) {
+        setHasMore(false);
+      } else {
+        setVideos((prev) => [...prev, ...newVideos]);
+        setPage(pageNumber + 1);
+      }
+    } catch (error) {
+      console.error("Error fetching videos:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    handleFetchVideos(1);
+  }, []);
+
+  const handleLoadMore = () => {
+    if (!isLoading && hasMore) {
+      handleFetchVideos(page);
+    }
+  };
+
   const renderItem = ({ item }: any) => (
     <VideoItem
-      thumbnail={item.thumbnail}
-      duration={item.duration}
-      avatar={item.avatar}
+      id={item.id}
+      thumbnail={item.file.thumbnail.path}
+      duration={`${faker.number.int({ min: 1, max: 59 })}:${faker.number.int({
+        min: 1,
+        max: 59,
+      })}`}
+      avatar={item.channel.avatarFile?.path ?? faker.image.url()}
       title={item.title}
-      metadata={item.metadata}
+      metadata={`${item.channel.name} • ${
+        item.viewCount ?? faker.number.int({ min: 10, max: 1000 })
+      } lượt xem • ${faker.date.recent().toLocaleDateString()}`}
     />
   );
 
@@ -32,7 +77,7 @@ export default function HomeScreen() {
       <View style={styles.header}>
         <TouchableOpacity style={styles.logo}>
           <AntDesign name="API" size={24} color="red" />
-          <Text style={styles.logoText}>Metube</Text>
+          <Text style={styles.logoText}>Jatube</Text>
         </TouchableOpacity>
         <View style={styles.headerIcons}>
           <TouchableOpacity>
@@ -87,6 +132,15 @@ export default function HomeScreen() {
         renderItem={renderItem}
         keyExtractor={(item: any) => item.id}
         style={styles.container}
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={() =>
+          isLoading ? (
+            <View style={styles.loader}>
+              <Text>Loading...</Text>
+            </View>
+          ) : null
+        }
       />
 
       {/* Footer */}
@@ -185,5 +239,9 @@ const styles = StyleSheet.create({
   },
   navigationItemIconCenter: {
     transform: [{ translateY: -8 }],
+  },
+  loader: {
+    padding: 10,
+    alignItems: "center",
   },
 });
